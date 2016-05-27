@@ -1,3 +1,3 @@
 # reserve-internet
 
-![reserve-internet](https://github.com/msergiy87/reserve-internet/blob/master/reserve-internet.jpg)
+![reserve-internet](https://github.com/msergiy87/reserve-internet/blob/master/asterisk_po_script.jpg)
