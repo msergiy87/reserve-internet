@@ -1,6 +1,6 @@
 # reserve-internet
 
-Yun can switch to reserve nternet channel and track status of main peer.
+Yun can switch to reserve internet channel and track status of main peer.
 
 You should have two nic cards with external ip adresses on it from different internet providers.
 
