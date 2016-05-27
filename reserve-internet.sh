@@ -46,7 +46,7 @@ IS_REGISTRY=$(asterisk -rx "sip show peer $MAIN_PEER" | grep Status | awk '{prin
 
 if [ "OK" = "$IS_REGISTRY" ] && [ "$MAIN_GW" = "$CURRENT_GW" ]
 then
-	echo "All is fine, SIP chaneel ALIVE and Uteam is current" >> $LOG_FILE
+	echo "All is fine, SIP chaneel ALIVE and Main is current" >> $LOG_FILE
 	echo "END SCRIPT AT $(date +%d-%m-%Y_%H:%M:%S)" >> $LOG_FILE
 	exit 0
 
@@ -59,22 +59,22 @@ fi
 # Check if the main router is pinged
 if ping -c 4 -I $MAIN_IP 8.8.8.8 > /dev/null 2>&1
 then
-	echo "Uteam is working (pinging)" >> $LOG_FILE
+	echo "Main is working (pinging)" >> $LOG_FILE
 
 	if [ "$CURRENT_GW" = "$MAIN_GW" ]
 	then
-		echo "Uteam is current. Problems with registration. Exit" >> $LOG_FILE
+		echo "Main is current. Problems with registration. Exit" >> $LOG_FILE
 		echo "END SCRIPT AT $(date +%d-%m-%Y_%H:%M:%S)" >> $LOG_FILE
 		exit 113
 	else
-		echo "MAIN not Current, switch to Uteam" >> $LOG_FILE
+		echo "MAIN not Current, switch to Main" >> $LOG_FILE
 		#=====================================================
 		# Check if we have active calls
 		ACTIVE_CALLS=$(asterisk -rx "core show channels" | grep "active call" | awk '{print $1}')
 
 		if [ 1 -le "$ACTIVE_CALLS" ]
 		then
-			echo "There are $ACTIVE_CALLS current calls. Switch to Uteam delayed. Exit" >> $LOG_FILE
+			echo "There are $ACTIVE_CALLS current calls. Switch to Main delayed. Exit" >> $LOG_FILE
 			echo "END SCRIPT AT $(date +%d-%m-%Y_%H:%M:%S)" >> $LOG_FILE
 			exit 113
 		fi
@@ -85,25 +85,25 @@ then
 		#cp -f /etc/asterisk/copy/pjsip.transports.conf.uteam  /etc/asterisk/pjsip.transports.conf
 		#cp -f /etc/asterisk/copy/sip_general_additional.conf.uteam /etc/asterisk/sip_general_additional.conf
 		#/etc/init.d/asterisk start
-		echo "Default route switch to Uteam: $MAIN_GW" >> $LOG_FILE
+		echo "Default route switch to Main: $MAIN_GW" >> $LOG_FILE
 		echo "END SCRIPT AT $(date +%d-%m-%Y_%H:%M:%S)" >> $LOG_FILE
 		exit 0
 	fi
 else
-	echo "Uteam not working (not pinging)" >> $LOG_FILE
+	echo "Main not working (not pinging)" >> $LOG_FILE
 
 	if [ "$CURRENT_GW" = "$RESERVE_GW" ]
 	then
-		echo "Discovery is Current. Exit" >> $LOG_FILE
+		echo "Reserve is Current. Exit" >> $LOG_FILE
 		echo "END SCRIPT AT $(date +%d-%m-%Y_%H:%M:%S)" >> $LOG_FILE
 		exit 0
 	else
-		echo "Discovery not Current. switch to Discovery" >> $LOG_FILE
+		echo "Reserve not Current. switch to Reserve" >> $LOG_FILE
 		#=====================================================
 		# We shouldn't change GW if reserve channel is unavailable
 		if ! ping -c 4 -I $RESERVE_IP 8.8.8.8 > /dev/null 2>&1
 		then
-			echo "Discovery is unavailable (not pingigng). Exit" >> $LOG_FILE
+			echo "Reserve is unavailable (not pingigng). Exit" >> $LOG_FILE
 			echo "END SCRIPT AT $(date +%d-%m-%Y_%H:%M:%S)" >> $LOG_FILE
 			exit 113
 		fi
@@ -114,7 +114,7 @@ else
 		#cp -f /etc/asterisk/copy/pjsip.transports.conf.disc  /etc/asterisk/pjsip.transports.conf
 		#cp -f /etc/asterisk/copy/sip_general_additional.conf.disc /etc/asterisk/sip_general_additional.conf
 		#/etc/init.d/asterisk start
-		echo "Default route switch to Discovery: $RESERVE_GW" >> $LOG_FILE
+		echo "Default route switch to Reserve: $RESERVE_GW" >> $LOG_FILE
 		echo "END SCRIPT AT $(date +%d-%m-%Y_%H:%M:%S)" >> $LOG_FILE
 		exit 0
 	fi
